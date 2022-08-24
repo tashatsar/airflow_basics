@@ -15,7 +15,7 @@ Some notes on Airflow basics for beginners. Partially based on course [Apache Ai
 
 `docker ps` Show running docker containers
 
-`docker exec -it container_id /bin/bash` Execute the command /bin/bash in the container_id to get a shell session
+`docker exec -it container_id /bin/bash` Open a bash terminal in a container
 
 `docker stop <container_id>` Stop the container, ID can be found with `docker ps`
 
