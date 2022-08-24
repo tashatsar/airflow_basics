@@ -1,5 +1,5 @@
 # airflow_basics
-Some notes on Airflow basics for beginners. Partially based on course [Apache Airflow: The Hands-On Guide](https://udemy.com/course/the-ultimate-hands-on-course-to-master-apache-airflow). 
+Some notes on Airflow basics for beginners. Partially based on course [Apache Airflow: The Hands-On Guide](https://udemy.com/course/the-ultimate-hands-on-course-to-master-apache-airflow). The followng commands and code worked for Win10, Airflow in Docker. 
 
 ## Docker basics
 **Docker:** a platform for developing, shipping, and running applications that  enables to separate applications from  infrastructure
@@ -15,7 +15,7 @@ Some notes on Airflow basics for beginners. Partially based on course [Apache Ai
 
 `docker ps` Show running docker containers
 
-`docker exec -it container_id /bin/bash` Open a bash terminal in a container
+`docker exec -it container_id //bin//bash` Open a bash terminal in a container
 
 `docker stop <container_id>` Stop the container, ID can be found with `docker ps`
 
