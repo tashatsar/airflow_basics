@@ -23,7 +23,7 @@ Some notes on Airflow basics for beginners. Partially based on course [Apache Ai
 
 ### Small tip:
 Just run `airflow tasks test` each time you  create a new task: helps to save a lot of time
-
+`airflow tasks test <dag_is> <task_id> <execution date in the past>`
 
 ## Airflow 
 ### Refreshing
