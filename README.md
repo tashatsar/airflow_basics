@@ -6,6 +6,8 @@ Some notes on Airflow basics for beginners. Partially based on course [Apache Ai
 
 **Docker compose:** yaml syntax-description of services to run, multi-container Docker apps. If you have Desktop installed then you already have the Compose plugin installed.
 
+![](https://github.com/tashatsar/airflow_basics/blob/main/photo_2022-08-23_23-40-33.jpg)
+
 ### Commands (Command Line Interface, CLI)
 `docker build -t airflow-basic .` Build a docker image from the Dockerfile in the current directory (airflow-materials/airflow-basic)  and name it airflow-basic
 
