@@ -8,7 +8,7 @@ Some notes on Airflow basics for beginners. Partially based on course [Apache Ai
 2. [Airflow](#airflow):
 	1. [Commands](#commands)
 	2. [Parameters](#parameters)
-	3. [DAGs folder](#dags-folder)
+	3. [DAGs folder organization](#dags-folder-organization)
 	4. [Refreshing](#refreshing)
 	5. [Operators](#operators)
 
@@ -41,8 +41,8 @@ Some notes on Airflow basics for beginners. Partially based on course [Apache Ai
 Not the only, but a pretty convinient way to run airflow commands is from bash command line. Let's get into bash command line of a particular docker container with a command `docker exec -it container_id //bin//bash`.
 
 - **"Historical" predictions** `airflow dags backfill --start-date START_DATE --end-date END_DATE dag_id`. More params [here](https://airflow.apache.org/docs/apache-airflow/stable/cli-and-env-variables-ref.html#backfill).
-- For **debugging** just run `airflow tasks test <dag_id> <task_id> <execution_date_in_the_past>` each time you  create a new task: helps to save a lot of time of possible debugging. This command runs task instances locally, outputs their log to stdout (on screen), does not bother with dependencies, and does not communicate state (running, success, failed, …) to the database. It simply allows testing a single task instance.
-- for **debug on a DAG level**: the same applies to `airflow dags test <dag_id> <execution_date_in_the_past>`, but on a DAG level. It performs a single DAG run of the given DAG id. While it does take task dependencies into account, no state is registered in the database. It is convenient for locally testing a full run of your DAG, given that e.g. if one of your tasks expects data at some location, it is available.
+- For **debug** just run `airflow tasks test <dag_id> <task_id> <execution_date_in_the_past>` each time you  create a new task: helps to save a lot of time of possible debugging. This command runs task instances locally, outputs their log to stdout (on screen), does not bother with dependencies, and does not communicate state (running, success, failed, …) to the database. It simply allows testing a single task instance.
+- For **debug on a DAG level**: the same applies to `airflow dags test <dag_id> <execution_date_in_the_past>`, but on a DAG level. It performs a single DAG run of the given DAG id. While it does take task dependencies into account, no state is registered in the database. It is convenient for locally testing a full run of your DAG, given that e.g. if one of your tasks expects data at some location, it is available.
 
 ### Parameters
 
@@ -67,11 +67,19 @@ Let’s Repeat That: The scheduler runs your job one schedule_interval AFTER the
 
 `DAGRun **3** (wait_for_downstream=True): task_A (not triggered yet) -> task_B (not triggered yet) -> task_C (not triggered yet)` because wait_for_downstream is set to True and this DAG run cannot be started before DAG run 2 is finished. Thus, DAG run 3 is waiting for tasks B and C of DAG run 2 to be executed. 
 
-### DAGs folder
-**Don't want anyone to see some of your presious DAGs?** Use `.airflowignore` file with regex!  **#bestpractice**: always to have a `.airflowignore` file even if it's empty. 
+### DAGs folder organization
 
-**Wanna hide this mess of files and modules?** You can use zip files! In more detailes there is documentation^ 
-While often you will specify dags in a single .py file it might sometimes be required to combine dag and its dependencies. For example, you might want to combine several dags together to version them together or you might want to manage them together or you might need an extra module that is not available by default on the system you are running airflow on. To allow this you can create a zip file that contains the dag(s) in the root of the zip file and have the extra modules unpacked in directories.
+**Don't want anyone to see some of your presious DAGs in the UI?** Use `.airflowignore` file with regex!  **#bestpractice**: always to have a `.airflowignore` file even if it's empty. 
+
+**Wanna hide this mess of files and modules?** You can use zip files! Why? In order to:
+- combine several dags together to version them together.
+- manage them together.
+- have an extra module that is not available by default on the system you are running airflow on.
+
+In more detailes there is [documentation](https://airflow.apache.org/docs/apache-airflow/stable/concepts/dags.html?highlight=zip#packaging-dags)
+
+**Tired of storing everything in the same directory!?** DAGBag can help a lot! A dagbag is a collection of dags, parsed **out of a folder tree**. It makes it easier to run distinct environments for say production and development, tests, or for different teams or security profiles. What would have been system level settings are now dagbag level so that one system can run multiple, independent settings sets. **#bestpractice**: DAGBag should have high level configuration settings, like what database to use as a backend and what executor to use to fire off tasks. 
+**Drawbacks: errors and problems of DAGBags won't appear in the Airflow UI, only logs of command line**
 
 ### Refreshing
 Both the webserver and scheduler parse your DAGs. You can configure this parsing process with different configuration settings. Configurations in general can be set set in `airflow.cfg` file or using environment variables.
