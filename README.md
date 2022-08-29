@@ -1,14 +1,27 @@
 # airflow_basics
-Some notes on Airflow basics for beginners. Partially based on course [Apache Airflow: The Hands-On Guide](https://udemy.com/course/the-ultimate-hands-on-course-to-master-apache-airflow). The followng commands and code worked for Win10, Airflow in Docker. 
+Some notes on Airflow basics for beginners. Partially based on course [Apache Airflow: The Hands-On Guide](https://udemy.com/course/the-ultimate-hands-on-course-to-master-apache-airflow) and mostly on the [official documentation](https://airflow.apache.org/docs/apache-airflow/stable/index.html). The followng commands and code worked for Win10, Airflow in Docker.
 
-## Docker basics
+## Table of Contents
+1. [Docker basics](#docker-basics):
+	1. [Docker basics](#docker-basics)
+	1. [Commands](#commands)
+2. [Airflow](#airflow):
+	1. [Commands](#commands)
+	2. [Parameters](#parameters)
+	3. [DAGs folder](#dags-folder)
+	4. [Refreshing](#refreshing)
+	5. [Operators](#operators)
+
+
+## Docker 
+### Docker basics
 **Docker:** a platform for developing, shipping, and running applications that  enables to separate applications from  infrastructure
 
 **Docker compose:** yaml syntax-description of services to run, multi-container Docker apps. If you have Desktop installed then you already have the Compose plugin installed.
 
 ![](https://github.com/tashatsar/airflow_basics/blob/main/photo_2022-08-23_23-40-33.jpg)
 
-### Commands (Command Line Interface, CLI)
+### Commands
 `docker build -t airflow-basic .` Build a docker image from the Dockerfile in the current directory (airflow-materials/airflow-basic)  and name it airflow-basic
 
 `docker run --rm -d -p 8080:8080 airflow-basic` Run it
@@ -21,13 +34,6 @@ Some notes on Airflow basics for beginners. Partially based on course [Apache Ai
 
 `docker-compose up -d --build` Build images before starting containers
 
-### Small tip:
-
-Just run `airflow tasks test <dag_id> <task_id> <execution_date_in_the_past>` each time you  create a new task: helps to save a lot of time of possible debugging. This command runs task instances locally, outputs their log to stdout (on screen), does not bother with dependencies, and does not communicate state (running, success, failed, …) to the database. It simply allows testing a single task instance.
-
-The same applies to `airflow dags test <dag_id> <execution_date_in_the_past>`, but on a DAG level. It performs a single DAG run of the given DAG id. While it does take task dependencies into account, no state is registered in the database. It is convenient for locally testing a full run of your DAG, given that e.g. if one of your tasks expects data at some location, it is available.
-
-
 ## Airflow 
 
 ### Commands (Command Line Interface, CLI)
@@ -35,6 +41,8 @@ The same applies to `airflow dags test <dag_id> <execution_date_in_the_past>`, b
 Not the only, but a pretty convinient way to run airflow commands is from bash command line. Let's get into bash command line of a particular docker container with a command `docker exec -it container_id //bin//bash`.
 
 - **"Historical" predictions** `airflow dags backfill --start-date START_DATE --end-date END_DATE dag_id`. More params [here](https://airflow.apache.org/docs/apache-airflow/stable/cli-and-env-variables-ref.html#backfill).
+- For **debugging** just run `airflow tasks test <dag_id> <task_id> <execution_date_in_the_past>` each time you  create a new task: helps to save a lot of time of possible debugging. This command runs task instances locally, outputs their log to stdout (on screen), does not bother with dependencies, and does not communicate state (running, success, failed, …) to the database. It simply allows testing a single task instance.
+- for **debug on a DAG level**: the same applies to `airflow dags test <dag_id> <execution_date_in_the_past>`, but on a DAG level. It performs a single DAG run of the given DAG id. While it does take task dependencies into account, no state is registered in the database. It is convenient for locally testing a full run of your DAG, given that e.g. if one of your tasks expects data at some location, it is available.
 
 ### Parameters
 
@@ -58,6 +66,12 @@ Let’s Repeat That: The scheduler runs your job one schedule_interval AFTER the
 `DAGRun **2** (wait_for_downstream=True): task_A (successeed) -> task_B (in process of execution) -> task_C (not triggered yet)` 
 
 `DAGRun **3** (wait_for_downstream=True): task_A (not triggered yet) -> task_B (not triggered yet) -> task_C (not triggered yet)` because wait_for_downstream is set to True and this DAG run cannot be started before DAG run 2 is finished. Thus, DAG run 3 is waiting for tasks B and C of DAG run 2 to be executed. 
+
+### DAGs folder
+**Don't want anyone to see some of your presious DAGs?** Use `.airflowignore` file with regex!  **#bestpractice**: always to have a `.airflowignore` file even if it's empty. 
+
+**Wanna hide this mess of files and modules?** You can use zip files! In more detailes there is documentation^ 
+While often you will specify dags in a single .py file it might sometimes be required to combine dag and its dependencies. For example, you might want to combine several dags together to version them together or you might want to manage them together or you might need an extra module that is not available by default on the system you are running airflow on. To allow this you can create a zip file that contains the dag(s) in the root of the zip file and have the extra modules unpacked in directories.
 
 ### Refreshing
 Both the webserver and scheduler parse your DAGs. You can configure this parsing process with different configuration settings. Configurations in general can be set set in `airflow.cfg` file or using environment variables.
