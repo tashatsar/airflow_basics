@@ -41,10 +41,23 @@ Not the only, but a pretty convinient way to run airflow commands is from bash c
 - `start_date` can be defined as a datetime object `datetime.datetime(2022.01.01)` in the past or in the future and can be set on a task level (which **is not** recommended). It is not the execution date, execution date equals to `start_date+schedule_interval`. **#bestpractice**: set `start_date` globally!
 - `schedule_interval` by default is daily (at 00:00 UTC), can be defined as cron expression or datetime object. Possible presets: `@once, @hourly, @daily, @weekly, @monthly, @yearly`. **#bestpractice**: set `schedule_interval` as cron expression because of possible issues with timezones in case on Python datetime objects. 
 - `end_date` it's pretty obvious, isn't it?
-
 Let’s Repeat That: The scheduler runs your job one schedule_interval AFTER the start date, at the END of the period.
-
 - Catchup: The scheduler, by default, will kick off a DAG Run for any data interval that has not been run since the last data interval (or has been cleared). It can be turned off either on the DAG itself with `dag.catchup = False` or by default at the configuration file level with `catchup_by_default = False`. 
+- `depends_on_past` is defined at the **task** level. For example:
+
+`DAGRun (depends_on_past=False): task_A (successeed) -> task_B (successeed) -> task_C (successeed)`
+
+`DAGRun (depends_on_past=False): task_A (successeed) -> task_B (failed) -> task_C (failed)` task_C failed because task_B failed first
+
+`DAGRun (depends_on_past=True): task_A (successeed) -> task_B (failed) -> task_C (not triggered)`
+
+- `wait_for_downstream` is also defined at the **task** level. For giving an example of usage (suppose that depends_on_past=True for all cases):
+
+`DAGRun **1** (wait_for_downstream=True): task_A (successeed) -> task_B (successeed) -> task_C (successeed)`
+
+`DAGRun **2** (wait_for_downstream=True): task_A (successeed) -> task_B (in process of execution) -> task_C (not triggered yet)` 
+
+`DAGRun **3** (wait_for_downstream=True): task_A (not triggered yet) -> task_B (not triggered yet) -> task_C (not triggered yet)` because wait_for_downstream is set to True and this DAG run cannot be started before DAG run 2 is finished. Thus, DAG run 3 is waiting for tasks B and C of DAG run 2 to be executed. 
 
 ### Refreshing
 Both the webserver and scheduler parse your DAGs. You can configure this parsing process with different configuration settings. Configurations in general can be set set in `airflow.cfg` file or using environment variables.
