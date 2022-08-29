@@ -52,20 +52,13 @@ Not the only, but a pretty convinient way to run airflow commands is from bash c
 Let’s Repeat That: The scheduler runs your job one schedule_interval AFTER the start date, at the END of the period.
 - Catchup: The scheduler, by default, will kick off a DAG Run for any data interval that has not been run since the last data interval (or has been cleared). It can be turned off either on the DAG itself with `dag.catchup = False` or by default at the configuration file level with `catchup_by_default = False`. 
 - `depends_on_past` is defined at the **task** level. For example:
-
-`DAGRun (depends_on_past=False): task_A (successeed) -> task_B (successeed) -> task_C (successeed)`
-
-`DAGRun (depends_on_past=False): task_A (successeed) -> task_B (failed) -> task_C (failed)` task_C failed because task_B failed first
-
-`DAGRun (depends_on_past=True): task_A (successeed) -> task_B (failed) -> task_C (not triggered)`
-
+1. `DAGRun (depends_on_past=False): task_A (successeed) -> task_B (successeed) -> task_C (successeed)`
+2. `DAGRun (depends_on_past=False): task_A (successeed) -> task_B (failed) -> task_C (failed)` task_C failed because task_B failed first
+3. `DAGRun (depends_on_past=True): task_A (successeed) -> task_B (failed) -> task_C (not triggered)`
 - `wait_for_downstream` is also defined at the **task** level. For giving an example of usage (suppose that depends_on_past=True for all cases):
-
-`DAGRun **1** (wait_for_downstream=True): task_A (successeed) -> task_B (successeed) -> task_C (successeed)`
-
-`DAGRun **2** (wait_for_downstream=True): task_A (successeed) -> task_B (in process of execution) -> task_C (not triggered yet)` 
-
-`DAGRun **3** (wait_for_downstream=True): task_A (not triggered yet) -> task_B (not triggered yet) -> task_C (not triggered yet)` because wait_for_downstream is set to True and this DAG run cannot be started before DAG run 2 is finished. Thus, DAG run 3 is waiting for tasks B and C of DAG run 2 to be executed. 
+1. `DAGRun 1 (wait_for_downstream=True): task_A (successeed) -> task_B (successeed) -> task_C (successeed)`
+2. `DAGRun 2 (wait_for_downstream=True): task_A (successeed) -> task_B (in process of execution) -> task_C (not triggered yet)` 
+3. `DAGRun 3 (wait_for_downstream=True): task_A (not triggered yet) -> task_B (not triggered yet) -> task_C (not triggered yet)` because wait_for_downstream is set to True and this DAG run cannot be started before DAG run 2 is finished. Thus, DAG run 3 is waiting for tasks B and C of DAG run 2 to be executed. 
 
 ### DAGs folder organization
 
