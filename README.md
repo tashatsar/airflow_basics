@@ -22,8 +22,11 @@ Some notes on Airflow basics for beginners. Partially based on course [Apache Ai
 `docker-compose up -d --build` Build images before starting containers
 
 ### Small tip:
-Just run `airflow tasks test` each time you  create a new task: helps to save a lot of time
-`airflow tasks test <dag_is> <task_id> <execution date in the past>`
+
+Just run `airflow tasks test <dag_id> <task_id> <execution_date_in_the_past>` each time you  create a new task: helps to save a lot of time of possible debugging. This command runs task instances locally, outputs their log to stdout (on screen), does not bother with dependencies, and does not communicate state (running, success, failed, …) to the database. It simply allows testing a single task instance.
+
+The same applies to `airflow dags test <dag_id> <execution_date_in_the_past>`, but on a DAG level. It performs a single DAG run of the given DAG id. While it does take task dependencies into account, no state is registered in the database. It is convenient for locally testing a full run of your DAG, given that e.g. if one of your tasks expects data at some location, it is available.
+
 
 ## Airflow 
 
