@@ -98,3 +98,6 @@ Operator = Task. Types of operators:
 
 
 in airflow container bash^ cat alert_dag.py.log | grep failure 
+
+trigger_rule! in params
+variables in general
