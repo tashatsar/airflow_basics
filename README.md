@@ -44,6 +44,11 @@ Airflow commands can be run from bash command line: to get into bash command lin
 - **"Historical" predictions** `airflow dags backfill --start-date START_DATE --end-date END_DATE dag_id`. More params [here](https://airflow.apache.org/docs/apache-airflow/stable/cli-and-env-variables-ref.html#backfill).
 - For **debug os a task** just run `airflow tasks test <dag_id> <task_id> <execution_date_in_the_past>` each time you  create a new task: helps to save a lot of time of possible debugging. This command runs task instances locally, outputs their log to stdout (on screen), does not bother with dependencies, and does not communicate state (running, success, failed, …) to the database. It simply allows testing a single task instance.
 - For **debug on a DAG level**: the same applies to `airflow dags test <dag_id> <execution_date_in_the_past>`, but on a DAG level. It performs a single DAG run of the given DAG id. While it does take task dependencies into account, no state is registered in the database. It is convenient for locally testing a full run of your DAG, given that e.g. if one of your tasks expects data at some location, it is available.
+- some other commands:
+	- `airflow run`: run a single task instance
+	- `airflow list_dags`: list all the DAGs
+	- `airflow dag_state`: get the status of a DAG run
+	- `airflow task_state`: get the status of a task instance 
 
 ### Parameters
 
