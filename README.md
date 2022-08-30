@@ -90,3 +90,6 @@ Operator = Task. Types of operators:
 - action
 - transfer
 - sensor
+
+
+in airflow container bash^ cat alert_dag.py.log | grep failure 
