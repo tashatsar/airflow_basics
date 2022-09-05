@@ -75,6 +75,13 @@ Let’s Repeat That: The scheduler runs your job one schedule_interval AFTER the
 - **Tired of storing everything in the same directory?** DAGBag can help a lot! **A dagbag is a collection of dags, parsed out of a folder tree**. It makes it easier to run distinct environments for say production and development, tests, or for different teams or security profiles. What would have been system level settings are now dagbag level so that one system can run multiple, independent settings sets. **#bestpractice**: DAGBag should have high level configuration settings, like what database to use as a backend and what executor to use to fire off tasks. 
 **Drawbacks: errors and problems of DAGBags won't appear in the Airflow UI!!!**
 
+### Trigger rules
+https://airflow.apache.org/docs/apache-airflow/1.10.3/concepts.html#trigger-rules
+
+### XComs
+It is **not recommended to use python fo data processing** inside of airflow. Instead, use data processing solutions like Spark. 
+
+
 ### Refreshing
 Both the webserver and scheduler parse your DAGs. You can configure this parsing process with different configuration settings. Configurations in general can be set in `airflow.cfg` file or using environment variables.
 
